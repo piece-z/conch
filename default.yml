@@ -1,0 +1,55 @@
+#cloud-config 
+
+# ホスト名設定
+hostname: ${HOSTNAME}
+# SSHパスワードログイン無効化
+ssh_pwauth: false
+
+# ロケール設定
+locale: ja_JP.UTF-8
+
+# タイムゾーン設定
+timezone: Asia/Tokyo
+
+# パッケージ更新
+package_update: yes
+package_upgrade: yes
+
+# ユーザー作成
+users:
+  - name: kshin
+    groups: [adm, audio, cdrom, dialout, dip, floppy, lxd, netdev, plugdev, sudo, video]
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    plain_text_passwd: aruto1224
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ${SSH_KEY}
+
+write_files:
+- path: /etc/netplan/11-eth1-swarm.yaml
+  content: |
+    network:
+      version: 2
+      renderer: networkd
+      ethernets:
+          #nic追加
+          eth1:
+              #IPアドレス
+              addresses: [${IP_ADDESS}/24]
+              dhcp4: no
+              dhcp6: no
+              routes:
+              #セグメント
+              - to: ${IP_ADDESS}/24
+
+
+
+#ルートログイン無効
+# ファイアウォール設定・再起動
+# SSHのみ許可
+runcmd:
+  - sed -i -e 's/^PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl reload ssh
+  #- ufw limit ssh
+  - ufw enable
+  - echo "CONSUL_ADDRESS = ${IP_ADDESS}" > /tmp/iplist
