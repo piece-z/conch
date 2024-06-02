@@ -24,11 +24,21 @@ users:
       - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCpZpAi8PYiYxITwrbZyTDmmP+xxS/eCsLSMxEpyHyiHfL9Lb2QEmnkHhQQpqFXeJ/gdb8OH4RxWbWIqoqnLBzPLr4QKAqet+e3WoeKVMfDGWCUj6b/2HNrNvPEepvhLQwUVknlQjd+Ka4WFZac6QC8sU7cvaSvgF3zgiH1GD/oRUxpJDBBjE3MMt881fgi/uYe7IlE3TNTJyl7fWnI5LLQC03orqRb0G7CNZ7SG2Qh6bGIvf1GMjM7eGnoF7YnJtn8Nl0LDNA/xBl/ucAviuan8MYYHbVpO3MpI/QWKPPyxEV89aVt0c4V6FkXlRfoQilS5n46tViMonSAgkGY3MGz2ihiYdaPSj6w4+TKGXnvzvWxoxFuEKBpnmVy/Nd6Oby7ysZyUIkTJhdWsinH5G0D75o89yQbIcnUohb5nHIUGeRXkiUXQ9FdTpQ5QdNaBxB/2tVV5jRVnDIjRRU6RgCcfKzoXidLJ4TXKsIFcvjGJ7/6tH6Tawlq9GGFHfM4Mog1jUHJX8sfjDwfKTUC/fvHH6nUb0hSAeZk0lAmRoXiNNDRUA99tgapBZsh0WQHlSTlhIXa0HvMFE4PQoBXiHz8z5qMwOAosDCiVRRVQY+uEzML/IogeJnwg63Yj7pgoXLDpbq59wiUv/AJlPlbbZ09nFmED3yrnGAq/qekQQqCw=="
 
 
-#ルートログイン無効
-# ファイアウォール設定・再起動
-# SSHのみ許可
+
+
+
 runcmd:
+#ルートログイン無効
   - sed -i -e 's/^PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
-  - systemctl reload ssh
-  #- ufw limit ssh
+  # ファイアウォール設定・再起動
   - ufw enable
+  # SSH設定
+  - ufw allow 22
+  - systemctl reload ssh
+
+ #設定スクリプトダウンロード
+  - git clone https://github.com/kshin1224/conoha.git /tmp
+
+  ・
+  - shutdown -r now
+
